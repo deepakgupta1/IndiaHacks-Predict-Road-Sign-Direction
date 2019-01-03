@@ -1,5 +1,5 @@
 # IndiaHacks-Predict-Road-Sign-Direction
-Predict direction of road sign facing from data collected from vehicles.
+Predict direction of road sign facing from data collected from vehicles of Here Technologies.
 
 ### Problem
 Building digital maps is challenging, and maintaining it up to date in an ever-changing world is even more challenging. Various machine learning techniques helps us to detect road signs and changes in real world, and process it to update maps.
