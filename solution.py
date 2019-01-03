@@ -1,12 +1,4 @@
-
-# coding: utf-8
-
-# In[1]:
-
 # india hacks ml 2017: predict the road sign - here
-
-
-# In[2]:
 
 import pandas as pd
 import numpy as np
@@ -18,24 +10,18 @@ from sklearn.grid_search import GridSearchCV
 from datetime import datetime
 
 
-# In[3]:
 
 train = pd.read_csv('train.csv')
 test = pd.read_csv('test.csv')
 sample_sub = pd.read_csv('sample_submission.csv')
 
 
-# In[4]:
 
 test['SignFacing (Target)'] = 'Rear'
 
 
-# In[5]:
-
 train_test = pd.concat([train, test])
 
-
-# In[6]:
 
 train_test['DetectedCamera'].loc[train_test['DetectedCamera'] == 'Rear'] = 0
 train_test['DetectedCamera'].loc[train_test['DetectedCamera'] == 'Front'] = 1
@@ -46,8 +32,6 @@ train_test['SignFacing (Target)'].loc[train_test['SignFacing (Target)'] == 'Fron
 train_test['SignFacing (Target)'].loc[train_test['SignFacing (Target)'] == 'Left'] = 2
 train_test['SignFacing (Target)'].loc[train_test['SignFacing (Target)'] == 'Right'] = 3
 
-
-# In[7]:
 
 train_test['front'] = 0
 train_test['rear'] = 0
@@ -60,16 +44,12 @@ train_test['right'].loc[train_test['DetectedCamera'] == 3] = 1
 #train_test.drop(['DetectedCamera'], axis=1, inplace=True)
 
 
-# In[8]:
-
 train_test['quadrant'] = 0
 train_test['quadrant'].loc[train_test['AngleOfSign'] < 90] = 1
 train_test['quadrant'].loc[(train_test['AngleOfSign'] > 90) & (train_test['AngleOfSign'] <= 180)] = 2
 train_test['quadrant'].loc[(train_test['AngleOfSign'] > 180) & (train_test['AngleOfSign'] <= 270)] = 3
 train_test['quadrant'].loc[(train_test['AngleOfSign'] > 270) & (train_test['AngleOfSign'] <= 360)] = 4
 
-
-# In[9]:
 
 train_test['axis_angle'] = 0
 train_test['axis_angle'].loc[(train_test['AngleOfSign'] < 45)] = train_test['AngleOfSign'].loc[(train_test['AngleOfSign'] < 45)]
@@ -79,14 +59,10 @@ train_test['axis_angle'].loc[(train_test['AngleOfSign'] >= 225) & (train_test['A
 train_test['axis_angle'].loc[(train_test['AngleOfSign'] >= 315)] = np.abs(360-train_test['AngleOfSign'].loc[(train_test['AngleOfSign'] >= 315)])
 
 
-# In[10]:
-
 train = train_test[:train.shape[0]]
 test = train_test[train.shape[0]:]
 predictors = ['AngleOfSign', 'SignAspectRatio', 'SignWidth', 'SignHeight', 'front', 'rear', 'left', 'right', 'quadrant', 'axis_angle']
 
-
-# In[11]:
 
 # making the model now
 def modelfit(alg, dtrain, predictors, useTrainCV=True, cv_folds=5, early_stopping_rounds=30):
@@ -109,8 +85,6 @@ def modelfit(alg, dtrain, predictors, useTrainCV=True, cv_folds=5, early_stoppin
     return alg
 
 
-# In[12]:
-
 xgb1 = XGBClassifier(
     learning_rate = 0.1,
     n_estimators = 1000,
@@ -126,8 +100,6 @@ xgb1 = XGBClassifier(
 model1 = modelfit(xgb1, train, predictors)
 
 
-# In[13]:
-
 submit = pd.DataFrame()
 submit['Id'] = test['Id']
 preds = model1.predict_proba(test[predictors])
@@ -136,9 +108,3 @@ submit['Left'] = preds[:, 2]
 submit['Rear'] = preds[:, 0]
 submit['Right'] = preds[:, 3]
 submit.to_csv('submit.csv', index=False)
-
-
-# In[ ]:
-
-
-
